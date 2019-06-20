@@ -1,13 +1,13 @@
 from sklearn.externals import joblib
-model = joblib.load("sentiment_analysis_naive_bayes_model.pickle")
+import os
 import sys
-
+current_path = os.getcwd()
 args = sys.argv
 
 data = args[0]
 model = None
 try:
-    model = joblib.load("/Models/sentiment_analysis_naive_bayes_model.pkl")
+    model = joblib.load(current_path+"/Models/sentiment_analysis_naive_bayes_model.pkl")
 except:
     print("Model not found")
 

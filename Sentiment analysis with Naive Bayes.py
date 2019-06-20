@@ -5,16 +5,23 @@
 
 # In[1]:
 
-
-train = open("/Users/sougata-8718/Downloads/amazon_reviews_train.csv","r+")
-test = open("/Users/sougata-8718/Downloads/amazon_reviews_test.csv","r+")
+import os
+current_path = os.getcwd()
+train = open(current_path+"/Data/amazon_reviews_train.csv","r+")
+test = open(current_path+"/Data/amazon_reviews_test.csv","r+")
 train = train.read()
 test = test.read()
 
 
+# In[ ]:
+
+
+
+
+
 # # Imports
 
-# In[2]:
+# In[8]:
 
 
 import numpy as np
@@ -23,6 +30,7 @@ import nltk
 import sklearn
 import string
 import textblob
+from sklearn.externals import joblib
 from nltk.stem.snowball import SnowballStemmer,PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.naive_bayes import GaussianNB,MultinomialNB
@@ -47,7 +55,7 @@ def messy_text_to_df(text):
     labels[np.where(labels=='__label__1')] = "Negative"
     df["Data"] = data
     df["Label"] = labels
-
+    
     return df
 
 def remove_punctuation_and_numbers(text,replacements):
@@ -71,7 +79,7 @@ def remove_words_single(string,words_to_be_removed):
 def remove_words(data,words_to_be_removed):
     res = data.apply(lambda x : remove_words_single(x,words_to_be_removed))
     return res
-
+    
     for text,label in documents:
         labels.append(document.split("\t",1)[0])
         text = document.split('\t')[1]
@@ -83,7 +91,7 @@ def remove_words(data,words_to_be_removed):
         for i in range(len(words)):
             if words[i] not in words_to_be_removed:
                 filtered_words.append(stemmer.stem(words[i]))
-
+        
         res = ' '.join(filtered_words)
         data.append(res)
     labels = np.array(labels)
@@ -97,7 +105,7 @@ def stem_single_string(string,nltkstemmer):
     for word in words:
         stemmed_list.append(nltkstemmer.stem(word))
     return ' '.join(stemmed_list)
-
+    
 
 def stem(data):
     stemmer = SnowballStemmer("english")
@@ -105,25 +113,25 @@ def stem(data):
     return res
 
 def find_rare_words(data,max_frequency=4):
-
+    
     vectoriser = get_vectorizer(data)
-
-
+    
+    
     temp = ' '.join(data)
     frequencies = (nltk.FreqDist(nltk.word_tokenize(temp)))
-
+    
     fs = np.array(frequencies.most_common())
     fs = pd.DataFrame(fs)
     fs.columns = ["word","count"]
     fs["freq"] = fs["count"].astype(int)
     fs = fs.drop("count",axis=1)
-
+    
     rare_words = list(fs[fs["freq"]<=max_frequency]["word"])
-
+    
     return rare_words
 
 def get_vectorizer(data,vectorizer="CountVectorizer"):
-
+    
     if vectorizer == "TFIDF":
         tfidf = TfidfVectorizer()
         tfidf.fit(data)
@@ -136,7 +144,7 @@ def get_vectorizer(data,vectorizer="CountVectorizer"):
 
 def vectorize_data(data,vectorizer="CountVectorizer"):
     from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-
+    
     if vectorizer == "TFIDF":
         tfidf = TfidfVectorizer()
         tfidf.fit(data)
@@ -156,11 +164,11 @@ def remove_symbols_stopwords_and_stem(data):
     data["Data"] = remove_non_words(data["Data"],replacements)
     data["Data"] = remove_words(data["Data"],stopwords)
     data["Data"] = stem(data["Data"])
-
+    
     return data
 
 
-# # Preprocessing
+# # Preprocessing 
 
 # In[5]:
 
@@ -181,13 +189,15 @@ train["Data"] = remove_words(train["Data"],rare_words)
 test["Data"] = remove_words(test["Data"],rare_words)
 
 
-# In[8]:
+# In[ ]:
+
+
 
 
 
 # # Vectorizer
 
-# In[10]:
+# In[6]:
 
 
 vectoriser = get_vectorizer(train["Data"])
@@ -195,12 +205,17 @@ vectoriser = get_vectorizer(train["Data"])
 
 # # Model Training
 
-# In[11]:
+# In[10]:
 
 
 model = MultinomialNB()
 model.fit(vectoriser.transform(train["Data"]).toarray(),train["Label"])
 test["Prediction"] = model.predict(vectoriser.transform(test["Data"]).toarray())
+
+# In[25]:
+
+
+joblib.dump(model,current_path+"/Models/sentiment_analysis_naive_bayes_model.pkl")
 
 
 # # Evaluation
@@ -210,7 +225,5 @@ test["Prediction"] = model.predict(vectoriser.transform(test["Data"]).toarray())
 
 F1_Score = sklearn.metrics.f1_score(np.array(test["Label"])=="Positive",test["Prediction"]=="Positive")
 Accuracy = sklearn.metrics.accuracy_score(test["Label"],test["Prediction"])
-print("F1 Score : ",F1_Score,"Accuracy : ",Accuracy)
+print("Model trained.\n","F1 Score : ",F1_Score,"\nAccuracy : ",Accuracy)
 
-
-# In[17]:
