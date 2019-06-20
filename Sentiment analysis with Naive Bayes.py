@@ -47,7 +47,7 @@ def messy_text_to_df(text):
     labels[np.where(labels=='__label__1')] = "Negative"
     df["Data"] = data
     df["Label"] = labels
-    
+
     return df
 
 def remove_punctuation_and_numbers(text,replacements):
@@ -71,7 +71,7 @@ def remove_words_single(string,words_to_be_removed):
 def remove_words(data,words_to_be_removed):
     res = data.apply(lambda x : remove_words_single(x,words_to_be_removed))
     return res
-    
+
     for text,label in documents:
         labels.append(document.split("\t",1)[0])
         text = document.split('\t')[1]
@@ -83,7 +83,7 @@ def remove_words(data,words_to_be_removed):
         for i in range(len(words)):
             if words[i] not in words_to_be_removed:
                 filtered_words.append(stemmer.stem(words[i]))
-        
+
         res = ' '.join(filtered_words)
         data.append(res)
     labels = np.array(labels)
@@ -97,7 +97,7 @@ def stem_single_string(string,nltkstemmer):
     for word in words:
         stemmed_list.append(nltkstemmer.stem(word))
     return ' '.join(stemmed_list)
-    
+
 
 def stem(data):
     stemmer = SnowballStemmer("english")
@@ -105,25 +105,25 @@ def stem(data):
     return res
 
 def find_rare_words(data,max_frequency=4):
-    
+
     vectoriser = get_vectorizer(data)
-    
-    
+
+
     temp = ' '.join(data)
     frequencies = (nltk.FreqDist(nltk.word_tokenize(temp)))
-    
+
     fs = np.array(frequencies.most_common())
     fs = pd.DataFrame(fs)
     fs.columns = ["word","count"]
     fs["freq"] = fs["count"].astype(int)
     fs = fs.drop("count",axis=1)
-    
+
     rare_words = list(fs[fs["freq"]<=max_frequency]["word"])
-    
+
     return rare_words
 
 def get_vectorizer(data,vectorizer="CountVectorizer"):
-    
+
     if vectorizer == "TFIDF":
         tfidf = TfidfVectorizer()
         tfidf.fit(data)
@@ -136,7 +136,7 @@ def get_vectorizer(data,vectorizer="CountVectorizer"):
 
 def vectorize_data(data,vectorizer="CountVectorizer"):
     from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-    
+
     if vectorizer == "TFIDF":
         tfidf = TfidfVectorizer()
         tfidf.fit(data)
@@ -156,11 +156,11 @@ def remove_symbols_stopwords_and_stem(data):
     data["Data"] = remove_non_words(data["Data"],replacements)
     data["Data"] = remove_words(data["Data"],stopwords)
     data["Data"] = stem(data["Data"])
-    
+
     return data
 
 
-# # Preprocessing 
+# # Preprocessing
 
 # In[5]:
 
@@ -216,7 +216,3 @@ print("F1 Score : ",F1_Score,"Accuracy : ",Accuracy)
 
 
 # In[17]:
-
-
-
-
