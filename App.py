@@ -1,11 +1,11 @@
 from flask import Flask, render_template,request, redirect, url_for, jsonify
 import numpy as np
 from sklearn.externals import joblib
-import predict
-
+from Predictor import Predictor
+import os
+current_path = os.getcwd()
 app = Flask(__name__)
 
-model = test_model.get_model()
 
 
 @app.route('/')
@@ -14,5 +14,11 @@ def home():
 
 @app.route('/predict',methods=["POST"])
 def predict():
-    
-    return render_template("result.html")
+    text = request.form["input"]
+    predictor = Predictor()
+    model,vectoriser = predictor.get_model()
+    result = predictor.predict(text,model,vectoriser)
+    return render_template("prediction.html",result = result)
+
+
+app.run(debug=True)
