@@ -184,8 +184,6 @@ test["Data"] = remove_words(test["Data"],rare_words)
 # In[8]:
 
 
-test
-
 
 # # Vectorizer
 
