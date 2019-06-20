@@ -40,7 +40,8 @@ from sklearn.naive_bayes import GaussianNB,MultinomialNB
 
 # In[3]:
 
-
+class NaiveBayes:
+    x = 5
 def messy_text_to_df(text):
     documents = text.split("\n")
     df = pd.DataFrame()
@@ -167,8 +168,7 @@ def remove_symbols_stopwords_and_stem(data):
 
     return data
 
-def predict(data,model):
-    return model.predict(vectoriser.transform(data).toarray())
+
 # # Preprocessing
 
 # In[5]:
@@ -217,7 +217,7 @@ test["Prediction"] = model.predict(vectoriser.transform(test["Data"]).toarray())
 
 
 joblib.dump(model,current_path+"/Models/sentiment_analysis_naive_bayes_model.pkl")
-
+joblib.dump(vectoriser,current_path+"/Models/vectoriser.pkl")
 
 # # Evaluation
 
