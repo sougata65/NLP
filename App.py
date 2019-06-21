@@ -1,4 +1,5 @@
 from flask import Flask, render_template,request, redirect, url_for, jsonify
+from flask_restful import Api,Resource,reqparse
 import numpy as np
 from sklearn.externals import joblib
 from Predictor import Predictor

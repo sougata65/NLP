@@ -38,7 +38,7 @@ class NaiveBayes:
         self.replacements = {"can't" : 'can not',"shan't":'shall not',"won't":'will not',"'ve" : " have", "'d" : " would", "'m" : " am", "'ll" : " will", "'s" : "", "n't" : " not","'re" : "are"}
         self.stopwords = set(["can","could","would","have","go","went","zero","one","two","three","four","five","six","seven","eight","nine","ten"]) | set(nltk.corpus.stopwords.words("english"))
         self.stemmer = SnowballStemmer("english")
-        print("hooray")
+        
     #defuseful
     def amazon_reviews_text_to_df(self,text):
         documents = text.split("\n")
