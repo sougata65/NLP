@@ -1,3 +1,5 @@
+Sentiment analysis
+
 |Model|Vectorizer|Accuracy|F1(Macro)|Hyperparameters|
 |---|---|---|---|---|
 |MultinomialNB|CountVectorizer|0.821|0.820999820999821|None|
